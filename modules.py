@@ -1,6 +1,7 @@
 from engine import Value
 import random
 
+
 class Module:
 
     def parameters(self):
@@ -15,14 +16,14 @@ class Neuron(Module):
 
     def __init__ (self, nin, nonlin=True):
         self.wights = [Value(random.uniform(-1,1)) for _ in range(nin)]
-        self.bias = Value(0)
+        self.bias = Value(random.uniform(-1,1))
         self.nonlin = nonlin
 
     def __call__(self, x):
-        act = sum([w*x for w, x in zip(self.wights, x)]) + self.bias
+        act = sum((w*x for w, x in zip(self.wights, x)), self.bias)
 
         def act_relu():
-            return act if act > 0 else 0
+            return act if act.data > 0 else Value(0)
 
         return act_relu() if self.nonlin else act
 
@@ -38,8 +39,8 @@ class Layer(Module):
         self.neurons = [Neuron(nin, **kwargs) for _ in range(nout)]
 
     def __call__(self, x):
-        out  = [n(x) for n in self.neurons]
-        return out if len(out) == 1 else out
+        outs  = [n(x) for n in self.neurons]
+        return outs[0] if len(outs) == 1 else outs
 
     def parameters(self):
         return [p for n in self.neurons for p in n.parameters()]
