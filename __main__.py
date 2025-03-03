@@ -69,4 +69,9 @@ def draw_dot(root):
 x = [2.0, 3.0, -1.0]
 y = n(x)
 y.backward()
-draw_dot(y).render('computation_graph', format='png', cleanup=True, view=True)
+draw_dot(y).render('forward_computation_graph', format='png', cleanup=True, view=True)
+
+ypred = [n(x) for x in xs]
+loss = sum((yout - ygt)**2 for ygt, yout in zip(ys, ypred))
+loss.backward()
+draw_dot(loss).render('backward_computation_graph', format='png', cleanup=True, view=True)
